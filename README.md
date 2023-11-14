@@ -12,10 +12,6 @@
 2. cp .env.example .env
 3. Run `service-up-build.sh` in [presensi-containerize](https://github.com/ExeCiety/containerize-presensi-comindo/blob/main/service-up-build.sh) to start the server
 
-## Hot Reload
-1. Install [Go Fiber CLI](go install github.com/gofiber/cli/fiber@latest)
-2. Run `fiber dev` to start the server with hot reload
-
 ## Migration
 ### Create migration
 ```
