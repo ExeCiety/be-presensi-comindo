@@ -2,7 +2,7 @@
 
 ## How to Install
 1. Clone this repository
-2. cp .env.example .env
+2. cp .env.example .env and fill the environment variables
 3. Run `go mod tidy` to install dependencies
 4. Run `go install github.com/cosmtrek/air@latest` to install air
 5. Run `air` to start the server
