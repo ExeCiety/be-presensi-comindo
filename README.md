@@ -1,4 +1,4 @@
-# Presensi Comindo
+# Presensi Comindo Backend
 
 ## How to Install
 1. Clone this repository
@@ -8,9 +8,7 @@
 5. Run `air` to start the server
 
 ## How to Install Via Docker
-1. Clone this repository
-2. cp .env.example .env
-3. Run `service-up-build.sh` in [presensi-containerize](https://github.com/ExeCiety/containerize-presensi-comindo/blob/main/service-up-build.sh) to start the server
+1. Read [Containerize README.md](https://github.com/ExeCiety/containerize-presensi-comindo/blob/main/README.md)
 
 ## Migration
 ### Create migration
