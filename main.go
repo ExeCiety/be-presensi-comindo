@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,7 +14,7 @@ import (
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -33,6 +36,12 @@ func main() {
 	// Create Fiber app
 	app := fiber.New()
 
+	// Set Helmet
+	app.Use(helmet.New())
+
+	// Set Recover
+	app.Use(fiberRecover.New())
+
 	// Configure Logger
 	if _, err := os.Stat("logs"); os.IsNotExist(err) {
 		if errMkDirLog := os.Mkdir("logs", 0755); errMkDirLog != nil {
@@ -52,6 +61,8 @@ func main() {
 			log.Fatal("Failed to close log file")
 		}
 	}(logFile)
+	iw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(iw)
 
 	app.Use(logger.New())
 	app.Use(logger.New(logger.Config{
