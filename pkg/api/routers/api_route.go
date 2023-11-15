@@ -11,4 +11,11 @@ func SetRouter(app *fiber.App) {
 	apiRouter := app.Group("/api", apiMiddlewares.ApiMiddleware)
 
 	apiV1Routers.SetRouter(apiRouter)
+
+	// 404 Handler
+	app.Use(func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "Not Found",
+		})
+	})
 }

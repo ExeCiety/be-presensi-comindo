@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/ExeCiety/be-presensi-comindo/cmd"
-	"github.com/ExeCiety/be-presensi-comindo/db"
 	"log"
 	"os"
 
+	"github.com/ExeCiety/be-presensi-comindo/cmd"
+	"github.com/ExeCiety/be-presensi-comindo/db"
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
