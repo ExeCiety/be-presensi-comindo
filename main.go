@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -14,6 +13,7 @@ import (
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	"github.com/gofiber/fiber/v2/log"
 	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
 
 	"github.com/gofiber/fiber/v2"
@@ -61,6 +61,7 @@ func main() {
 			log.Fatal("Failed to close log file")
 		}
 	}(logFile)
+
 	iw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(iw)
 
