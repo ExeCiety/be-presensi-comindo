@@ -7,7 +7,5 @@ import (
 )
 
 func SetRouter(router fiber.Router) {
-	v1Router := router.Group("/v1")
-
-	apiV1AuthRouters.SetRouter(v1Router)
+	apiV1AuthRouters.SetRouter(router.Group("/v1"))
 }

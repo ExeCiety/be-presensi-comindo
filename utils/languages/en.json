@@ -1,0 +1,51 @@
+{
+  "validation": {
+    "required": "{{.Field}} is required",
+    "required_if": "{{.Field}} is required",
+    "required_with": "{{.Field}} is required",
+    "email": "{{.Field}} entered is not in the correct format",
+    "eqfield": "{{.Field}} must be the same as entered for {{.Param}}",
+    "nefield": "{{.Field}} cannot be the same as entered for {{.Param}}",
+    "alphaspace": "{{.Field}} contains only letters",
+    "uuid4": "{{.Field}} must be a valid UUID",
+    "oneof": "{{.Field}} must be one of {{.Param}}",
+    "max": {
+      "password": "{{.Field}} maximum {{.Param}} characters",
+      "password_confirmation": "{{.Field}} maximum {{.Param}} characters",
+      "new_password": "{{.Field}} maximum {{.Param}} characters",
+      "phone_number": "{{.Field}} maximum {{.Param}} numeric digits",
+      "full_name": "{{.Field}} contains a maximum of {{.Param}} letters including spaces",
+      "username": "{{.Field}} maximum {{.Param}} characters"
+    },
+    "min": {
+      "password": "{{.Field}} at least {{.Param}} characters",
+      "password_confirmation": "{{.Field}} at least {{.Param}} characters",
+      "new_password": "{{.Field}} at least {{.Param}} characters",
+      "username": "{{.Field}} at least {{.Param}} characters",
+      "phone_number": "{{.Field}} minimum {{.Param}} numeric digits",
+      "full_name": "{{.Field}} contains at least {{.Param}} letters",
+      "role_ids": "Please select at least {{.Param}} roles",
+      "brand_ids": "Please select at least {{.Param}} brands",
+      "addresses": "Please select at least {{.Param}} addresses"
+    },
+    "startsnotwith": "{{.Field}} first digit cannot be {{.Param}}",
+    "alpha": "{{.Field}} can only be filled with letters",
+    "numeric": "{{.Field}} can only enter numbers",
+    "nolowercase": "{{.Field}} must have at least 1 lowercase letter",
+    "nouppercase": "{{.Field}} must have at least 1 capital letter",
+    "nonumericcase": "{{.Field}} has at least 1 number",
+    "alphanumericstrict": "{{.Field}} can only contain letters, numbers, or _, -, .",
+    "services": {
+      "usernameNotFound": "Username not registered, please register first",
+      "wrongPassword": "The password entered does not match the one registered"
+    },
+    "unique-username": "{{.Field}} is already exist"
+  },
+  "err": {
+    "validation_error": "Validation error",
+    "request_is_not_json": "Request is not json payload",
+    "user_not_found": "User not found",
+    "incorrect_username_or_password": "Incorrect username or password"
+  },
+  "login_success": "Login success"
+}
