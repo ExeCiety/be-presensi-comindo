@@ -1,0 +1,50 @@
+{
+  "validation": {
+    "required": "{{.Field}} wajib diisi",
+    "required_if": "{{.Field}} wajib diisi",
+    "required_with": "{{.Field}} wajib diisi",
+    "email": "{{.Field}} yang dimasukkan tidak sesuai format",
+    "eqfield": "{{.Field}} harus sama dengan yang dimasukkan untuk {{.Param}}",
+    "nefield": "{{.Field}} tidak boleh sama dengan yang dimasukkan untuk {{.Param}}",
+    "alphaspace": "{{.Field}} hanya berisi huruf",
+    "uuid4": "{{.Field}} harus berupa UUID yang valid",
+    "oneof": "{{.Field}} harus diantara {{.Param}}",
+    "max": {
+      "password": "{{.Field}} maksimal {{.Param}} karakter",
+      "password_confirmation": "{{.Field}} maksimal {{.Param}} karakter",
+      "new_password": "{{.Field}} maksimal {{.Param}} karakter",
+      "phone_number": "{{.Field}} maksimal {{.Param}} digit angka",
+      "full_name": "{{.Field}} maksimal berisi {{.Param}} huruf termasuk spasi",
+      "username":  "{{.Field}} maksimal {{.Param}} karakter"
+    },
+    "min": {
+      "password": "{{.Field}} minimal {{.Param}} karakter",
+      "password_confirmation": "{{.Field}} minimal {{.Param}} karakter",
+      "new_password": "{{.Field}} minimal {{.Param}} karakter",
+      "username": "{{.Field}} minimal {{.Param}} karakter",
+      "phone_number": "{{.Field}} minimal {{.Param}} digit angka",
+      "full_name": "{{.Field}} minimal berisi {{.Param}} huruf",
+      "role_ids": "Minimal memilih {{.Param}} role",
+      "brand_ids": "Minimal memilih {{.Param}} brand",
+      "addresses": "Minimal memilih {{.Param}} alamat"
+    },
+    "startsnotwith": "{{.Field}} digit pertama tidak boleh {{.Param}}",
+    "alpha": "{{.Field}} hanya boleh diisi dengan huruf",
+    "numeric": "{{.Field}} hanya bisa memasukkan angka",
+    "nolowercase": "{{.Field}} minimal memiliki 1 huruf kecil",
+    "nouppercase": "{{.Field}} minimal memiliki 1 huruf kapital",
+    "nonumericcase": "{{.Field}} minimal memiliki 1 angka",
+    "alphanumericstrict": "{{.Field}} hanya dapat berisi huruf, angka, atau _, -, .",
+    "services": {
+      "usernameNotFound": "Username tidak terdaftar, mohon untuk daftar terlebih dahulu",
+      "wrongPassword": "Password yang dimasukkan tidak sesuai dengan yang terdaftar"
+    },
+    "unique-username": "{{.Field}} sudah terdaftar"
+  },
+  "err": {
+    "validation_error": "Terjadi kesalahan saat validasi",
+    "request_is_not_json": "JSON tidak valid",
+    "incorrect_username_or_password": "Username atau password salah"
+  },
+  "login_success": "Login berhasil"
+}

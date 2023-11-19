@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,10 +11,13 @@ import (
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
-	"github.com/gofiber/fiber/v2/log"
-	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
@@ -34,7 +35,9 @@ func main() {
 	db.Connect()
 
 	// Create Fiber app
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: utils.DefaultErrorHandler,
+	})
 
 	// Set Helmet
 	app.Use(helmet.New())
@@ -69,6 +72,9 @@ func main() {
 	app.Use(logger.New(logger.Config{
 		Output: logFile,
 	}))
+
+	// Set Validator
+	utils.MyValidation = validator.New()
 
 	// Set Routers
 	pkgRouters.SetRouter(app)
