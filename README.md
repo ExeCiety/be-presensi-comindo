@@ -27,3 +27,21 @@ go run main.go migrate rollback
 ```
 Note: rollback argument will only rollback the last migration, if you want to rollback multiple migration, you can use --step flag
 Example: go run main.go migrate rollback --step=2
+
+## Seeder
+### Create Seeder
+```
+go run main.go seeder --create=<seeder_name>
+```
+
+### Seedling
+```
+go run main.go seeder
+```
+
+### Rollback
+```
+go run main.go seeder rollback
+```
+Note: rollback argument will only rollback the last seeder, if you want to rollback multiple migration, you can use --step flag
+Example: go run main.go seeder rollback --step=2
