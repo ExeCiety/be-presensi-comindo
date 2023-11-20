@@ -17,6 +17,21 @@ type ValidationError struct {
 
 var MyValidation *validator.Validate
 
+func QueryParserAndValidate(c *fiber.Ctx, request any) error {
+	err := c.QueryParser(request)
+	validationErrorMessages := GetValidationResult(ValidateStruct(request))
+
+	if err != nil || len(validationErrorMessages) > 0 {
+		return NewApiError(
+			fiber.StatusUnprocessableEntity,
+			Translate("err.validation_error", nil),
+			validationErrorMessages,
+		)
+	}
+
+	return nil
+}
+
 func BodyParserAndValidate(c *fiber.Ctx, request any) error {
 	err := c.BodyParser(request)
 	validationErrorMessages := GetValidationResult(ValidateStruct(request))

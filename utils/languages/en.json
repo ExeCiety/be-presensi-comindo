@@ -47,5 +47,10 @@
     "user_not_found": "User not found",
     "incorrect_username_or_password": "Incorrect username or password"
   },
-  "login_success": "Login success"
+  "login": {
+    "login_success": "Login success"
+  },
+  "user": {
+    "get_users_success": "Get users success"
+  }
 }

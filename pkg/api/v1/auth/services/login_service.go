@@ -32,21 +32,18 @@ func NewLoginService(userRepositoryInterface userRepositories.UserRepositoryInte
 
 func (ls *LoginService) Login(
 	c *fiber.Ctx,
-	req *requests.LoginRequest,
-	userForLogin *userResponses.UserForLoginResponse,
+	request *requests.LoginRequest,
+	responseData *userResponses.UserForLoginResponse,
 ) error {
-	if err := utils.BodyParserAndValidate(c, req); err != nil {
+	if err := utils.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 
 	var user userModels.User
-
-	if err := ls.userRepo.FindUserByUsernameOrEmailOrNik(ls.db, req.Username, &user); err != nil {
+	if err := ls.userRepo.FindUserByUsernameOrEmailOrNik(ls.db, request.Username, &user); err != nil {
 		log.Error(err)
 		return utils.NewApiError(
-			fiber.StatusInternalServerError,
-			utils.Translate("err.internal_server_error", nil),
-			nil,
+			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
 		)
 	}
 
@@ -56,7 +53,7 @@ func (ls *LoginService) Login(
 		return utils.NewApiError(fiber.StatusUnauthorized, errMsg, nil)
 	}
 
-	if err := utils.ComparePassword(user.Password, req.Password); err != nil {
+	if err := utils.ComparePassword(user.Password, request.Password); err != nil {
 		log.Error(err)
 		return utils.NewApiError(
 			fiber.StatusUnauthorized,
@@ -70,14 +67,14 @@ func (ls *LoginService) Login(
 		return err
 	}
 
-	err := copier.Copy(userForLogin, &user)
-	if err != nil {
+	if err := copier.Copy(responseData, &user); err != nil {
 		log.Error(err)
 		return utils.NewApiError(
 			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
 		)
 	}
-	userForLogin.Token = jwtToken
+
+	responseData.Token = jwtToken
 
 	return nil
 }
@@ -100,7 +97,7 @@ func generateJwtTokenForLogin(user *userModels.User, outputToken *string) error 
 	if err != nil {
 		log.Error(err)
 		return utils.NewApiError(
-			fiber.StatusInternalServerError, utils.Translate("err.internal_server_error", nil), nil,
+			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
 		)
 	}
 

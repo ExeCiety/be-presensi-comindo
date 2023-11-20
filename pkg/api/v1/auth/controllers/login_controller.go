@@ -20,14 +20,14 @@ func NewLoginController(loginService services.LoginServiceInterface) *LoginContr
 }
 
 func (lc *LoginController) Login(c *fiber.Ctx) error {
-	loginRequest := new(requests.LoginRequest)
+	request := new(requests.LoginRequest)
 	responseData := new(userResponses.UserForLoginResponse)
 
-	if err := lc.LoginService.Login(c, loginRequest, responseData); err != nil {
+	if err := lc.LoginService.Login(c, request, responseData); err != nil {
 		return err
 	}
 
 	return utils.SendApiResponse(
-		c, fiber.StatusOK, utils.Translate("login_success", nil), responseData, nil,
+		c, fiber.StatusOK, utils.Translate("login.login_success", nil), responseData, nil,
 	)
 }

@@ -8,5 +8,5 @@ import (
 )
 
 type LoginServiceInterface interface {
-	Login(c *fiber.Ctx, req *requests.LoginRequest, userForLogin *userResponses.UserForLoginResponse) error
+	Login(c *fiber.Ctx, request *requests.LoginRequest, responseData *userResponses.UserForLoginResponse) error
 }

@@ -10,7 +10,10 @@ import (
 )
 
 func SetRouter(app *fiber.App) {
-	apiRouter := app.Group("/api", apiMiddlewares.AcceptLanguage, apiMiddlewares.ApiMiddleware)
+	apiRouter := app.Group("/api",
+		apiMiddlewares.AcceptLanguage,
+		apiMiddlewares.ApiMiddleware,
+	)
 
 	apiV1Routers.SetRouter(apiRouter)
 

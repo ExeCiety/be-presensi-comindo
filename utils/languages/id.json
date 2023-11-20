@@ -46,5 +46,10 @@
     "request_is_not_json": "JSON tidak valid",
     "incorrect_username_or_password": "Username atau password salah"
   },
-  "login_success": "Login berhasil"
+  "login": {
+    "login_success": "Login berhasil"
+  },
+  "user": {
+    "get_users_success": "Berhasil mendapatkan data user"
+  }
 }
