@@ -20,4 +20,5 @@ func SetRouter(router fiber.Router) {
 
 	userRouter := router.Group("/users")
 	userRouter.Get("", apiMiddlewares.JwtAuth(), apiMiddlewares.AuthRole(enums.RoleNameAdmin), userController.FindUsers)
+	userRouter.Post("", apiMiddlewares.JwtAuth(), apiMiddlewares.AuthRole(enums.RoleNameAdmin), userController.CreateUser)
 }

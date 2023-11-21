@@ -14,4 +14,8 @@ type UserRepositoryInterface interface {
 
 	// Find User
 	FindUserByUsernameOrEmailOrNik(db *gorm.DB, username string, result *models.User) error
+	IsUserByUsernameOrEmailOrNikExist(db *gorm.DB, username string) bool
+
+	// Create User
+	CreateUser(db *gorm.DB, payload *models.User, result *responses.CreateUser) error
 }

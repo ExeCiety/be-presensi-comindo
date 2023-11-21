@@ -9,4 +9,5 @@ import (
 
 type UserServiceInterface interface {
 	FindUsers(c *fiber.Ctx, request *requests.GetUsers, response *[]responses.GetUsers) error
+	CreateUser(c *fiber.Ctx, request *requests.CreateUser, response *responses.CreateUser) error
 }

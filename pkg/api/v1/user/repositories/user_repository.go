@@ -32,6 +32,31 @@ func (lr *UserRepository) FindUserByUsernameOrEmailOrNik(db *gorm.DB, username s
 	return tx.First(&result).Error
 }
 
+func (lr *UserRepository) IsUserByUsernameOrEmailOrNikExist(db *gorm.DB, username string) bool {
+	var countUser int64
+
+	db.Model(models.User{}).
+		Preload("Roles").
+		Where("username = ?", username).
+		Or("email = ?", username).
+		Or("nik = ?", username).
+		Count(&countUser)
+
+	if countUser > 0 {
+		return true
+	}
+
+	return false
+}
+
+func (lr *UserRepository) CreateUser(db *gorm.DB, payload *models.User, result *responses.CreateUser) error {
+	if err := db.Model(models.User{}).Create(&payload).Error; err != nil {
+		return err
+	}
+
+	return db.Model(models.User{}).Preload("Roles").First(&result, payload.Id).Error
+}
+
 func baseGetUsers(tx *gorm.DB, request *requests.GetUsers) {
 	tx.Preload("Roles").
 		Order("created_at ASC")

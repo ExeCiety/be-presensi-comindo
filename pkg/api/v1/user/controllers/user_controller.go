@@ -34,3 +34,19 @@ func (uc *UserController) FindUsers(c *fiber.Ctx) error {
 		nil,
 	)
 }
+
+func (uc *UserController) CreateUser(c *fiber.Ctx) error {
+	request := new(requests.CreateUser)
+	responseData := new(responses.CreateUser)
+
+	if err := uc.UserService.CreateUser(c, request, responseData); err != nil {
+		return err
+	}
+
+	return utils.SendApiResponse(
+		c, fiber.StatusCreated,
+		utils.Translate("user.create_user_success", nil),
+		responseData,
+		nil,
+	)
+}

@@ -39,7 +39,7 @@
       "usernameNotFound": "Username tidak terdaftar, mohon untuk daftar terlebih dahulu",
       "wrongPassword": "Password yang dimasukkan tidak sesuai dengan yang terdaftar"
     },
-    "unique-username": "{{.Field}} sudah terdaftar"
+    "unique_login_username": "{{.Field}} sudah terdaftar"
   },
   "err": {
     "validation_error": "Terjadi kesalahan saat validasi",
@@ -50,6 +50,7 @@
     "login_success": "Login berhasil"
   },
   "user": {
-    "get_users_success": "Berhasil mendapatkan data user"
+    "get_users_success": "Berhasil mendapatkan data user",
+    "create_user_success": "Berhasil membuat user"
   }
 }

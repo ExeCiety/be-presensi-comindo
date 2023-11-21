@@ -39,7 +39,7 @@
       "usernameNotFound": "Username not registered, please register first",
       "wrongPassword": "The password entered does not match the one registered"
     },
-    "unique-username": "{{.Field}} is already exist"
+    "unique_login_username": "{{.Field}} is already exist"
   },
   "err": {
     "validation_error": "Validation error",
@@ -51,6 +51,7 @@
     "login_success": "Login success"
   },
   "user": {
-    "get_users_success": "Get users success"
+    "get_users_success": "Get users success",
+    "create_user_success": "Create user success",
   }
 }
