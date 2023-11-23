@@ -12,7 +12,10 @@ import (
 // JwtAuth protect routes
 func JwtAuth() func(*fiber.Ctx) error {
 	return jwtware.New(jwtware.Config{
-		SigningKey:   jwtware.SigningKey{Key: []byte("secret")},
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: utils.GetEnvValue("JWT_ALG", "HS256"),
+			Key:    []byte(utils.GetEnvValue("JWT_SECRET", "secret")),
+		},
 		ErrorHandler: jwtError,
 	})
 }

@@ -7,7 +7,7 @@
     "eqfield": "{{.Field}} harus sama dengan yang dimasukkan untuk {{.Param}}",
     "nefield": "{{.Field}} tidak boleh sama dengan yang dimasukkan untuk {{.Param}}",
     "alphaspace": "{{.Field}} hanya berisi huruf",
-    "uuid4": "{{.Field}} harus berupa UUID yang valid",
+    "uuid": "{{.Field}} harus berupa UUID yang valid",
     "oneof": "{{.Field}} harus diantara {{.Param}}",
     "max": {
       "password": "{{.Field}} maksimal {{.Param}} karakter",
@@ -39,12 +39,21 @@
       "usernameNotFound": "Username tidak terdaftar, mohon untuk daftar terlebih dahulu",
       "wrongPassword": "Password yang dimasukkan tidak sesuai dengan yang terdaftar"
     },
-    "unique-username": "{{.Field}} sudah terdaftar"
+    "unique_login_username": "{{.Field}} sudah terdaftar",
+    "exists": "{{.Field}} tidak terdaftar"
   },
   "err": {
     "validation_error": "Terjadi kesalahan saat validasi",
     "request_is_not_json": "JSON tidak valid",
     "incorrect_username_or_password": "Username atau password salah"
   },
-  "login_success": "Login berhasil"
+  "login": {
+    "login_success": "Login berhasil"
+  },
+  "user": {
+    "get_users_success": "Berhasil mendapatkan data user",
+    "create_user_success": "Berhasil membuat user",
+    "update_user_success": "Berhasil mengubah data user",
+    "delete_users_success": "Berhasil menghapus user"
+  }
 }

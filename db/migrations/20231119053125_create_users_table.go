@@ -10,9 +10,9 @@ import (
 
 type Users struct {
 	Id          uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Username    string    `json:"username" gorm:"type:varchar(20);not null"`
-	Email       string    `json:"email" gorm:"type:varchar(255);not null"`
-	Nik         string    `json:"nik" gorm:"type:varchar(20);not null"`
+	Username    string    `json:"username" gorm:"type:varchar(20);unique;not null"`
+	Email       string    `json:"email" gorm:"type:varchar(255);unique;not null"`
+	Nik         string    `json:"nik" gorm:"type:varchar(20);unique;not null"`
 	Password    string    `json:"password" gorm:"type:varchar(255); not null"`
 	Name        string    `json:"name" gorm:"type:varchar(255); not null"`
 	PhoneNumber string    `json:"phone_number" gorm:"type:varchar(20);"`
