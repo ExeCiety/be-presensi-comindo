@@ -10,12 +10,19 @@ import (
 
 type UserRepositoryInterface interface {
 	// Find Users
-	FindUsers(db *gorm.DB, request *requests.GetUsers, result *[]responses.GetUsers) error
+	FindUsers(db *gorm.DB, request *requests.FindUsers, result *[]responses.FindUsers) error
 
 	// Find User
-	FindUserByUsernameOrEmailOrNik(db *gorm.DB, username string, result *models.User) error
-	IsUserByUsernameOrEmailOrNikExist(db *gorm.DB, username string) bool
+	FindUser(db *gorm.DB, request *requests.FindUser, result *responses.FindUser) error
+	FindUserForLogin(db *gorm.DB, request *requests.FindUser, result *models.User) error
+	IsUserByIdentityExist(db *gorm.DB, username string) bool
 
 	// Create User
 	CreateUser(db *gorm.DB, payload *models.User, result *responses.CreateUser) error
+
+	// Update User
+	UpdateUser(db *gorm.DB, request *requests.UpdateUser, payload *models.User, result *responses.UpdateUser) error
+
+	// Delete Users
+	DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error
 }

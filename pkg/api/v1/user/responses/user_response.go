@@ -6,17 +6,29 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-type UserForLoginResponse struct {
-	Id       string         `json:"id"`
-	Username string         `json:"username"`
-	Email    string         `json:"email"`
-	Name     string         `json:"name"`
-	Roles    []*models.Role `json:"roles"`
-	Token    string         `json:"token"`
+type UserForLogin struct {
+	Id           uuid.UUID      `json:"id"`
+	Username     string         `json:"username"`
+	Email        string         `json:"email"`
+	Name         string         `json:"name"`
+	Roles        []*models.Role `json:"roles"`
+	Token        string         `json:"token"`
+	RefreshToken string         `json:"refresh_token"`
 }
 
-type GetUsers struct {
-	Id        string         `json:"id"`
+type FindUsers struct {
+	Id        uuid.UUID      `json:"id"`
+	Username  string         `json:"username"`
+	Email     string         `json:"email"`
+	Nik       string         `json:"nik"`
+	Name      string         `json:"name"`
+	Roles     []*models.Role `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
+	CreatedAt string         `json:"created_at"`
+	UpdatedAt string         `json:"updated_at"`
+}
+
+type FindUser struct {
+	Id        uuid.UUID      `json:"id"`
 	Username  string         `json:"username"`
 	Email     string         `json:"email"`
 	Nik       string         `json:"nik"`
@@ -34,4 +46,18 @@ type CreateUser struct {
 	Name      string         `json:"name"`
 	Roles     []*models.Role `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
 	CreatedAt string         `json:"created_at"`
+}
+
+type UpdateUser struct {
+	Id        uuid.UUID      `json:"id"`
+	Username  string         `json:"username"`
+	Email     string         `json:"email"`
+	Nik       string         `json:"nik"`
+	Name      string         `json:"name"`
+	Roles     []*models.Role `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
+	CreatedAt string         `json:"created_at"`
+}
+
+type DeleteUsers struct {
+	Id uuid.UUID `json:"id"`
 }

@@ -21,7 +21,7 @@ func NewLoginController(loginService services.LoginServiceInterface) *LoginContr
 
 func (lc *LoginController) Login(c *fiber.Ctx) error {
 	request := new(requests.LoginRequest)
-	responseData := new(userResponses.UserForLoginResponse)
+	responseData := new(userResponses.UserForLogin)
 
 	if err := lc.LoginService.Login(c, request, responseData); err != nil {
 		return err

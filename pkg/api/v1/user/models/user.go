@@ -4,6 +4,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 
 	"github.com/gofrs/uuid"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -17,4 +18,13 @@ type User struct {
 	utils.Timestamp
 
 	Roles []*Role `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
+}
+
+func WhereByIdentity(identity string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("id::varchar ILIKE ?", identity).
+			Or("username = ?", identity).
+			Or("email = ?", identity).
+			Or("nik = ?", identity)
+	}
 }

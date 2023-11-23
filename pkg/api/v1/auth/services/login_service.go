@@ -7,6 +7,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/auth/requests"
 	userModels "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/models"
 	userRepositories "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/repositories"
+	userRequests "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/requests"
 	userResponses "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/responses"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
@@ -33,14 +34,14 @@ func NewLoginService(userRepositoryInterface userRepositories.UserRepositoryInte
 func (ls *LoginService) Login(
 	c *fiber.Ctx,
 	request *requests.LoginRequest,
-	responseData *userResponses.UserForLoginResponse,
+	responseData *userResponses.UserForLogin,
 ) error {
 	if err := utils.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 
 	var user userModels.User
-	if err := ls.userRepo.FindUserByUsernameOrEmailOrNik(ls.db, request.Username, &user); err != nil {
+	if err := ls.userRepo.FindUserForLogin(ls.db, &userRequests.FindUser{Identity: request.Username}, &user); err != nil {
 		log.Error(err)
 		return utils.NewApiError(
 			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
@@ -63,7 +64,12 @@ func (ls *LoginService) Login(
 	}
 
 	var jwtToken string
-	if err := generateJwtTokenForLogin(&user, &jwtToken); err != nil {
+	if err := generateJwtTokenForLogin(&user, &jwtToken, utilsEnums.JwtAccessTokenType); err != nil {
+		return err
+	}
+
+	var jwtRefreshToken string
+	if err := generateJwtTokenForLogin(&user, &jwtRefreshToken, utilsEnums.JwtRefreshTokenType); err != nil {
 		return err
 	}
 
@@ -75,11 +81,12 @@ func (ls *LoginService) Login(
 	}
 
 	responseData.Token = jwtToken
+	responseData.RefreshToken = jwtRefreshToken
 
 	return nil
 }
 
-func generateJwtTokenForLogin(user *userModels.User, outputToken *string) error {
+func generateJwtTokenForLogin(user *userModels.User, outputToken *string, jwtType string) error {
 	jwtToken := jwt.New(jwt.SigningMethodHS256)
 
 	claims := jwtToken.Claims.(jwt.MapClaims)
@@ -90,8 +97,12 @@ func generateJwtTokenForLogin(user *userModels.User, outputToken *string) error 
 	claims["name"] = user.Name
 	claims["roles"] = user.Roles
 
-	expiryTime := utils.StrToInt(utils.GetEnvValue("JWT_EXPIRES_IN_HOURS", "1"))
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(expiryTime)).Unix()
+	jwtExpiresInHours := utils.StrToInt(utils.GetEnvValue("JWT_EXPIRES_IN_HOURS", "1"))
+	if jwtType == utilsEnums.JwtRefreshTokenType {
+		jwtExpiresInHours = utils.StrToInt(utils.GetEnvValue("JWT_REFRESH_EXPIRES_IN_HOURS", "24"))
+	}
+
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(jwtExpiresInHours)).Unix()
 
 	token, err := jwtToken.SignedString([]byte(utils.GetEnvValue("JWT_SECRET", "secret")))
 	if err != nil {

@@ -8,6 +8,9 @@ import (
 )
 
 type UserServiceInterface interface {
-	FindUsers(c *fiber.Ctx, request *requests.GetUsers, response *[]responses.GetUsers) error
+	FindUsers(c *fiber.Ctx, request *requests.FindUsers, response *[]responses.FindUsers) error
+	FindUser(c *fiber.Ctx, request *requests.FindUser, response *responses.FindUser) error
 	CreateUser(c *fiber.Ctx, request *requests.CreateUser, response *responses.CreateUser) error
+	UpdateUser(c *fiber.Ctx, request *requests.UpdateUser, response *responses.UpdateUser) error
+	DeleteUsers(c *fiber.Ctx, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error
 }

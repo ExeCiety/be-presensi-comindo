@@ -7,6 +7,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserRepository struct{}
@@ -15,31 +16,42 @@ func NewUserRepository() UserRepositoryInterface {
 	return &UserRepository{}
 }
 
-func (lr *UserRepository) FindUsers(db *gorm.DB, request *requests.GetUsers, result *[]responses.GetUsers) error {
-	tx := db.Model(models.User{})
+func (ur *UserRepository) FindUsers(db *gorm.DB, request *requests.FindUsers, result *[]responses.FindUsers) error {
+	tx := db.Model(models.User{}).Unscoped()
 	baseGetUsers(tx, request)
 
-	return utils.Paginate(tx, &request.PaginationRequest).Find(&result).Error
+	return utils.Paginate(tx, &request.PaginationRequest).
+		Find(&result).Error
 }
 
-func (lr *UserRepository) FindUserByUsernameOrEmailOrNik(db *gorm.DB, username string, result *models.User) error {
+func (ur *UserRepository) FindUser(db *gorm.DB, request *requests.FindUser, result *responses.FindUser) error {
 	tx := db.Model(models.User{}).
+		Unscoped().
 		Preload("Roles").
-		Where("username = ?", username).
-		Or("email = ?", username).
-		Or("nik = ?", username)
+		Scopes(models.WhereByIdentity(request.Identity))
 
 	return tx.First(&result).Error
 }
 
-func (lr *UserRepository) IsUserByUsernameOrEmailOrNikExist(db *gorm.DB, username string) bool {
+func (ur *UserRepository) FindUserForLogin(
+	db *gorm.DB,
+	request *requests.FindUser,
+	result *models.User,
+) error {
+	tx := db.Model(models.User{}).
+		Preload("Roles").
+		Scopes(models.WhereByIdentity(request.Identity))
+
+	return tx.First(&result).Error
+}
+
+func (ur *UserRepository) IsUserByIdentityExist(db *gorm.DB, username string) bool {
 	var countUser int64
 
 	db.Model(models.User{}).
+		Unscoped().
 		Preload("Roles").
-		Where("username = ?", username).
-		Or("email = ?", username).
-		Or("nik = ?", username).
+		Scopes(models.WhereByIdentity(username)).
 		Count(&countUser)
 
 	if countUser > 0 {
@@ -49,15 +61,45 @@ func (lr *UserRepository) IsUserByUsernameOrEmailOrNikExist(db *gorm.DB, usernam
 	return false
 }
 
-func (lr *UserRepository) CreateUser(db *gorm.DB, payload *models.User, result *responses.CreateUser) error {
+func (ur *UserRepository) CreateUser(db *gorm.DB, payload *models.User, result *responses.CreateUser) error {
 	if err := db.Model(models.User{}).Create(&payload).Error; err != nil {
 		return err
 	}
 
-	return db.Model(models.User{}).Preload("Roles").First(&result, payload.Id).Error
+	return db.Model(models.User{}).
+		Preload("Roles").
+		First(&result, payload.Id).Error
 }
 
-func baseGetUsers(tx *gorm.DB, request *requests.GetUsers) {
+func (ur *UserRepository) UpdateUser(
+	db *gorm.DB,
+	request *requests.UpdateUser,
+	payload *models.User,
+	result *responses.UpdateUser,
+) error {
+	if err := db.Model(models.User{}).Scopes(models.WhereByIdentity(request.Identity)).Updates(&payload).Error; err != nil {
+		return err
+	}
+
+	return db.Model(models.User{}).
+		Unscoped().
+		Scopes(models.WhereByIdentity(request.Identity)).
+		Preload("Roles").
+		First(&result).Error
+}
+
+func (ur *UserRepository) DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error {
+	tx := db.Model(models.User{}).Unscoped()
+
+	if len(request.Ids) > 0 {
+		tx.Where("id IN (?)", request.Ids)
+	}
+
+	return tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
+		Delete(&response).Error
+}
+
+func baseGetUsers(tx *gorm.DB, request *requests.FindUsers) {
 	tx.Preload("Roles").
 		Order("created_at ASC")
 
