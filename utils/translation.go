@@ -8,51 +8,40 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-var Lang *string
+var DefaultLang = language.Indonesian
+var Locale *string
+var Lang language.Tag
+var Bundle *i18n.Bundle
 var Localizer *i18n.Localizer
-var bundle *i18n.Bundle
 
-func localization() {
-	var defaultLang language.Tag
-	var locale string
+func SetAllI18nBundles() {
+	Bundle = i18n.NewBundle(DefaultLang)
+	Bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	path := *RootPath
 
-	if Lang == nil {
-		locale = "id"
-	} else {
-		locale = *Lang
+	_, err := Bundle.LoadMessageFile(path + "utils/languages/id.json")
+	if err != nil {
+		log.Error("Error when reading file id.json")
+		return
 	}
 
-	if locale == "id" {
-		defaultLang = language.Indonesian
-	} else if locale == "en" {
-		defaultLang = language.English
+	_, err = Bundle.LoadMessageFile(path + "utils/languages/en.json")
+	if err != nil {
+		log.Error("Error when reading file en.json")
+		return
 	}
-
-	bundle = i18n.NewBundle(defaultLang)
-
-	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
-
-	if locale == "id" {
-		_, err := bundle.LoadMessageFile(path + "utils/languages/id.json")
-		if err != nil {
-			log.Error("Error when reading file id.json")
-			return
-		}
-	} else if locale == "en" {
-		_, err := bundle.LoadMessageFile(path + "utils/languages/en.json")
-		if err != nil {
-			log.Error("Error when reading file en.json")
-			return
-		}
-	}
-
-	Localizer = i18n.NewLocalizer(bundle, defaultLang.String())
 }
 
 func SetLocale(locale string) {
-	Lang = &locale
-	localization()
+	Locale = &locale
+
+	if *Locale == "id" {
+		Lang = language.Indonesian
+	} else if *Locale == "en" {
+		Lang = language.English
+	}
+
+	Localizer = i18n.NewLocalizer(Bundle, Lang.String())
 }
 
 func Translate(messageId string, data map[string]interface{}) string {

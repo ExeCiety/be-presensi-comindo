@@ -10,9 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type AuthRouter struct {
-}
-
 func SetRouter(router fiber.Router) {
 	userRepo := repositories.NewUserRepository()
 	userService := services.NewUserService(userRepo)

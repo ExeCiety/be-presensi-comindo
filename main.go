@@ -35,6 +35,9 @@ func main() {
 	// Connect DB
 	db.Connect()
 
+	// Set i18n
+	utils.SetAllI18nBundles()
+
 	// Create Fiber app
 	app := fiber.New(fiber.Config{
 		ErrorHandler: utils.DefaultErrorHandler,
