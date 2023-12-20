@@ -11,6 +11,7 @@ import (
 	userResponses "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/responses"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
@@ -36,7 +37,7 @@ func (ls *LoginService) Login(
 	request *requests.LoginRequest,
 	responseData *userResponses.UserForLogin,
 ) error {
-	if err := utils.BodyParserAndValidate(c, request); err != nil {
+	if err := utilsValidations.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 
@@ -91,6 +92,7 @@ func generateJwtTokenForLogin(user *userModels.User, outputToken *string, jwtTyp
 
 	claims := jwtToken.Claims.(jwt.MapClaims)
 
+	claims["id"] = user.Id
 	claims["username"] = user.Username
 	claims["email"] = user.Email
 	claims["nik"] = user.Nik

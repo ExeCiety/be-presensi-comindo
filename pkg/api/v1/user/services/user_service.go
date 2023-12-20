@@ -8,6 +8,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/responses"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
@@ -28,7 +29,7 @@ func NewUserService(userRepositoryInterface repositories.UserRepositoryInterface
 }
 
 func (us UserService) FindUsers(c *fiber.Ctx, request *requests.FindUsers, responseData *[]responses.FindUsers) error {
-	if err := utils.QueryParserAndValidate(c, request); err != nil {
+	if err := utilsValidations.QueryParserAndValidate(c, request); err != nil {
 		return err
 	}
 
@@ -46,9 +47,9 @@ func (us UserService) FindUser(c *fiber.Ctx, request *requests.FindUser, respons
 	request.Identity = c.Params("id", "")
 
 	if err := us.userRepo.FindUser(us.db, request, response); err != nil {
-		if err.Error() == utilsEnums.RecordNotFound {
+		if err.Error() == utilsEnums.GormErrorRecordNotFound {
 			return utils.NewApiError(
-				fiber.StatusNotFound, utilsEnums.StatusMessageNotFound, nil,
+				fiber.StatusNotFound, utils.Translate("err.record_not_found", nil), nil,
 			)
 		}
 
@@ -61,7 +62,7 @@ func (us UserService) FindUser(c *fiber.Ctx, request *requests.FindUser, respons
 }
 
 func (us UserService) CreateUser(c *fiber.Ctx, request *requests.CreateUser, response *responses.CreateUser) error {
-	if err := utils.BodyParserAndValidate(c, request); err != nil {
+	if err := utilsValidations.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 
@@ -100,7 +101,7 @@ func (us UserService) CreateUser(c *fiber.Ctx, request *requests.CreateUser, res
 }
 
 func (us UserService) UpdateUser(c *fiber.Ctx, request *requests.UpdateUser, response *responses.UpdateUser) error {
-	if err := utils.BodyParserAndValidate(c, request); err != nil {
+	if err := utilsValidations.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 
@@ -147,7 +148,7 @@ func (us UserService) UpdateUser(c *fiber.Ctx, request *requests.UpdateUser, res
 }
 
 func (us UserService) DeleteUsers(c *fiber.Ctx, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error {
-	if err := utils.BodyParserAndValidate(c, request); err != nil {
+	if err := utilsValidations.BodyParserAndValidate(c, request); err != nil {
 		return err
 	}
 

@@ -15,6 +15,7 @@ func init() {
 		CreateUsersTable(),
 		CreateRolesTable(),
 		CreateRoleUserTable(),
+		CreateAbsenteeApplicationsTable(),
 	}
 }
 

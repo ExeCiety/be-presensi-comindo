@@ -4,6 +4,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/utils/enums"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 type ApiError struct {
@@ -34,6 +35,7 @@ var DefaultErrorHandler = func(c *fiber.Ctx, err error) error {
 
 		return SendApiResponse(c, err.(*ApiError).Code, statusMessage, nil, err.(*ApiError).Errors)
 	default:
+		log.Error(err.Error())
 		return c.Status(fiber.StatusInternalServerError).SendString(enums.StatusMessageInternalServerError)
 	}
 }

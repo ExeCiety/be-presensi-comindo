@@ -12,6 +12,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
 	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
+	customValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations/custom_validations"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -78,8 +79,9 @@ func main() {
 	}))
 
 	// Set Validator
-	utils.MyValidation = validator.New()
-	utilsValidations.RegisterCustomValidations(utils.MyValidation)
+	utilsValidations.MyValidation = validator.New()
+	utilsValidations.UseJsonTagAsFieldName(utilsValidations.MyValidation)
+	customValidations.RegisterCustomValidations(utilsValidations.MyValidation)
 
 	// Set Routers
 	pkgRouters.SetRouter(app)

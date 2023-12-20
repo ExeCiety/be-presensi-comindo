@@ -1,6 +1,7 @@
 package responses
 
 import (
+	"github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/enums"
 	"github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/user/models"
 
 	"github.com/gofrs/uuid"
@@ -38,6 +39,13 @@ type FindUser struct {
 	UpdatedAt string         `json:"updated_at"`
 }
 
+type UserForCreateAbsenteeApplication struct {
+	Id    uuid.UUID     `json:"id"`
+	Email string        `json:"email"`
+	Name  string        `json:"name"`
+	Roles []*SimpleRole `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
+}
+
 type CreateUser struct {
 	Id        uuid.UUID      `json:"id"`
 	Username  string         `json:"username"`
@@ -60,4 +68,8 @@ type UpdateUser struct {
 
 type DeleteUsers struct {
 	Id uuid.UUID `json:"id"`
+}
+
+func (UserForCreateAbsenteeApplication) TableName() string {
+	return enums.UserTableName
 }

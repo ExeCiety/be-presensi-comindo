@@ -1,7 +1,10 @@
-package utils
+package validations
 
 import (
 	"strings"
+
+	"github.com/ExeCiety/be-presensi-comindo/utils"
+	"github.com/ExeCiety/be-presensi-comindo/utils/enums"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -15,6 +18,29 @@ type ValidationError struct {
 	Value     interface{}
 }
 
+func (v *ValidationError) GetMessageId() string {
+	messageId := v.Tag
+
+	switch v.Tag {
+	case enums.ValidationTagNameMax, enums.ValidationTagNameMin:
+		messageId = v.Tag + "." + v.Field
+		break
+	}
+
+	return messageId
+}
+
+func (v *ValidationError) GetParam() interface{} {
+	param := v.Param
+
+	switch v.Tag {
+	case enums.ValidationTagNameDateGreaterThanField:
+		return GetDateGreaterThanFieldParam(v)
+	}
+
+	return param
+}
+
 var MyValidation *validator.Validate
 
 func QueryParserAndValidate(c *fiber.Ctx, request any) error {
@@ -22,9 +48,9 @@ func QueryParserAndValidate(c *fiber.Ctx, request any) error {
 	validationErrorMessages := GetValidationResult(ValidateStruct(request))
 
 	if err != nil || len(validationErrorMessages) > 0 {
-		return NewApiError(
+		return utils.NewApiError(
 			fiber.StatusUnprocessableEntity,
-			Translate("err.validation_error", nil),
+			utils.Translate("err.validation_error", nil),
 			validationErrorMessages,
 		)
 	}
@@ -37,9 +63,9 @@ func BodyParserAndValidate(c *fiber.Ctx, request any) error {
 	validationErrorMessages := GetValidationResult(ValidateStruct(request))
 
 	if err != nil || len(validationErrorMessages) > 0 {
-		return NewApiError(
+		return utils.NewApiError(
 			fiber.StatusUnprocessableEntity,
-			Translate("err.validation_error", nil),
+			utils.Translate("err.validation_error", nil),
 			validationErrorMessages,
 		)
 	}
@@ -67,21 +93,11 @@ func ValidateStruct(obj any) []*ValidationError {
 
 func GetValidationResult(validationErrors []*ValidationError) map[string]string {
 	errResult := make(map[string]string)
-	var messageID string
-
 	for _, v := range validationErrors {
-		switch v.Tag {
-		case "max", "min":
-			messageID = v.Tag + "." + v.Field
-			break
-		default:
-			messageID = v.Tag
-			break
-		}
-
-		errResult[v.Field] = Translate("validation."+messageID, map[string]interface{}{
+		errResult[v.Field] = utils.Translate("validation."+v.GetMessageId(), map[string]interface{}{
 			"Field": v.Field,
-			"Param": v.Param,
+			"Param": v.GetParam(),
+			"Value": v.Value,
 		})
 	}
 

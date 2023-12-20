@@ -24,5 +24,5 @@ type UserRepositoryInterface interface {
 	UpdateUser(db *gorm.DB, request *requests.UpdateUser, payload *models.User, result *responses.UpdateUser) error
 
 	// Delete Users
-	DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error
+	DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, result *[]responses.DeleteUsers) error
 }
