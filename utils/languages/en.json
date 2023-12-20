@@ -69,5 +69,8 @@
     "delete_absentee_applications_success": "Delete absentee applications success",
     "absentee_application_already_exist_on_that_days": "Absentee application already exist on that days",
     "absentee_application_user_id_cannot_be_changed": "Absentee application user id cannot be changed"
+  },
+  "file": {
+    "upload_file_success": "Upload file success"
   }
 }
