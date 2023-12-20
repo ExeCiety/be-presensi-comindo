@@ -11,6 +11,7 @@ import (
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsStorage "github.com/ExeCiety/be-presensi-comindo/utils/storage"
 	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
 	customValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations/custom_validations"
 
@@ -78,6 +79,21 @@ func main() {
 		Output: logFile,
 	}))
 
+	// Set Storage Directories
+	if _, err := os.Stat("storage"); os.IsNotExist(err) {
+		if errMkDirLog := os.Mkdir("storage", 0755); errMkDirLog != nil {
+			panic(errMkDirLog)
+		}
+	}
+
+	for _, storageType := range utilsStorage.StorageTypes {
+		if err := utilsStorage.MakeStorageDirectoryByName(storageType); err != nil {
+			panic(err)
+		}
+	}
+
+	utilsStorage.RegisterStorageType(app)
+
 	// Set Validator
 	utilsValidations.MyValidation = validator.New()
 	utilsValidations.UseJsonTagAsFieldName(utilsValidations.MyValidation)
@@ -89,7 +105,7 @@ func main() {
 	// Listen to port
 	port := utils.GetEnvValue("APP_PORT", utilsEnums.DefaultAppPort)
 	if err := app.Listen(fmt.Sprintf(":%s", port)); err != nil {
-		log.Fatalf("Error when listen to port %s: %v", port, err)
+		log.Fatalf("Error when listen to port :%s: %v", port, err)
 		return
 	}
 }

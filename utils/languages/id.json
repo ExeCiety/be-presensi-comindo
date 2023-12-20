@@ -68,5 +68,8 @@
     "delete_absentee_applications_success": "Berhasil menghapus pengajuan absen",
     "absentee_application_already_exist_on_that_days": "Pengajuan absen sudah ada pada tanggal tersebut",
     "absentee_application_user_id_cannot_be_changed": "Id user dari pengajuan absen tidak dapat diubah"
+  },
+  "file": {
+    "upload_file_success": "Berhasil mengupload file"
   }
 }
