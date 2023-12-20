@@ -1,5 +1,5 @@
 package enums
 
 const (
-	RecordNotFound string = "record not found"
+	GormErrorRecordNotFound string = "record not found"
 )

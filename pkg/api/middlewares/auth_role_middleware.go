@@ -2,7 +2,8 @@ package middlewares
 
 import (
 	"github.com/ExeCiety/be-presensi-comindo/utils"
-	"github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsAuth "github.com/ExeCiety/be-presensi-comindo/utils/auth"
+	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,7 +14,7 @@ func AuthRole(roleName string) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		user := c.Locals("user").(*jwt.Token)
 		if user == nil {
-			return utils.SendApiResponse(c, fiber.StatusForbidden, enums.StatusMessageForbidden, nil, nil)
+			return utils.SendApiResponse(c, fiber.StatusForbidden, utilsEnums.StatusMessageForbidden, nil, nil)
 		}
 
 		claims := user.Claims.(jwt.MapClaims)
@@ -25,6 +26,26 @@ func AuthRole(roleName string) func(*fiber.Ctx) error {
 			}
 		}
 
-		return utils.SendApiResponse(c, fiber.StatusForbidden, enums.StatusMessageForbidden, nil, nil)
+		return utils.SendApiResponse(c, fiber.StatusForbidden, utilsEnums.StatusMessageForbidden, nil, nil)
+	}
+}
+
+// AuthRoles protect routes
+func AuthRoles(roleNames []string) func(*fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		hasRoles, err := utilsAuth.IsUserAuthedHasRoles(roleNames)
+		if err != nil {
+			if err.Error() == utilsEnums.ErrorUserIsNotAuthenticated {
+				return utils.SendApiResponse(c, fiber.StatusForbidden, utilsEnums.StatusMessageForbidden, nil, nil)
+			}
+
+			return utils.SendApiResponse(c, fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil, nil)
+		}
+
+		if hasRoles {
+			return c.Next()
+		}
+
+		return utils.SendApiResponse(c, fiber.StatusForbidden, utilsEnums.StatusMessageForbidden, nil, nil)
 	}
 }

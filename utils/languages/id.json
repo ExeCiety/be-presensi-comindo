@@ -6,6 +6,7 @@
     "email": "{{.Field}} yang dimasukkan tidak sesuai format",
     "eqfield": "{{.Field}} harus sama dengan yang dimasukkan untuk {{.Param}}",
     "nefield": "{{.Field}} tidak boleh sama dengan yang dimasukkan untuk {{.Param}}",
+    "gtefield": "{{.Field}} harus lebih besar atau sama dengan yang dimasukkan untuk {{.Param}}",
     "alphaspace": "{{.Field}} hanya berisi huruf",
     "uuid": "{{.Field}} harus berupa UUID yang valid",
     "oneof": "{{.Field}} harus diantara {{.Param}}",
@@ -40,12 +41,16 @@
       "wrongPassword": "Password yang dimasukkan tidak sesuai dengan yang terdaftar"
     },
     "unique_login_username": "{{.Field}} sudah terdaftar",
-    "exists": "{{.Field}} tidak terdaftar"
+    "datetime": "{{.Value}} adalah format yang salah, format yang benar adalah {{.Param}}",
+    "exists": "{{.Field}} tidak terdaftar",
+    "date_greater_than_today": "{{.Field}} harus lebih besar dari tanggal sekarang",
+    "date_greater_than_field": "{{.Field}} harus lebih besar dari {{.Param}}"
   },
   "err": {
     "validation_error": "Terjadi kesalahan saat validasi",
     "request_is_not_json": "JSON tidak valid",
-    "incorrect_username_or_password": "Username atau password salah"
+    "incorrect_username_or_password": "Username atau password salah",
+    "record_not_found": "Data tidak ditemukan"
   },
   "login": {
     "login_success": "Login berhasil"
@@ -55,5 +60,13 @@
     "create_user_success": "Berhasil membuat user",
     "update_user_success": "Berhasil mengubah data user",
     "delete_users_success": "Berhasil menghapus user"
+  },
+  "absentee_application": {
+    "get_absentee_applications_success": "Berhasil mendapatkan data pengajuan absen",
+    "create_absentee_application_success": "Berhasil membuat pengajuan absen",
+    "update_absentee_application_success": "Berhasil mengubah data pengajuan absen",
+    "delete_absentee_applications_success": "Berhasil menghapus pengajuan absen",
+    "absentee_application_already_exist_on_that_days": "Pengajuan absen sudah ada pada tanggal tersebut",
+    "absentee_application_user_id_cannot_be_changed": "Id user dari pengajuan absen tidak dapat diubah"
   }
 }

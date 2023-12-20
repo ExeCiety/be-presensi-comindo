@@ -6,6 +6,7 @@
     "email": "{{.Field}} entered is not in the correct format",
     "eqfield": "{{.Field}} must be the same as entered for {{.Param}}",
     "nefield": "{{.Field}} cannot be the same as entered for {{.Param}}",
+    "gtefield": "{{.Field}} must be greater than or equal to {{.Param}}",
     "alphaspace": "{{.Field}} contains only letters",
     "uuid4": "{{.Field}} must be a valid UUID",
     "oneof": "{{.Field}} must be one of {{.Param}}",
@@ -40,13 +41,17 @@
       "wrongPassword": "The password entered does not match the one registered"
     },
     "unique_login_username": "{{.Field}} is already exist",
-    "exists": "{{.Field}} is not exist"
+    "datetime": "{{.Value}} is not a valid date, allowed format: {{.Param}}",
+    "exists": "{{.Field}} is not exist",
+    "date_greater_than_today": "{{.Field}} must be greater than today",
+    "date_greater_than_field": "{{.Field}} must be greater than {{.Param}}"
   },
   "err": {
     "validation_error": "Validation error",
     "request_is_not_json": "Request is not json payload",
     "user_not_found": "User not found",
-    "incorrect_username_or_password": "Incorrect username or password"
+    "incorrect_username_or_password": "Incorrect username or password",
+    "record_not_found": "Record not found"
   },
   "login": {
     "login_success": "Login success"
@@ -56,5 +61,13 @@
     "create_user_success": "Create user success",
     "update_user_success": "Update user success",
     "delete_users_success": "Delete users success"
+  },
+  "absentee_application": {
+    "get_absentee_applications_success": "Get absentee applications success",
+    "create_absentee_application_success": "Create absentee application success",
+    "update_absentee_application_success": "Update absentee application success",
+    "delete_absentee_applications_success": "Delete absentee applications success",
+    "absentee_application_already_exist_on_that_days": "Absentee application already exist on that days",
+    "absentee_application_user_id_cannot_be_changed": "Absentee application user id cannot be changed"
   }
 }

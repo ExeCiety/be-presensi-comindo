@@ -77,7 +77,7 @@ func (ur *UserRepository) UpdateUser(
 	payload *models.User,
 	result *responses.UpdateUser,
 ) error {
-	if err := db.Model(models.User{}).Scopes(models.WhereByIdentity(request.Identity)).Updates(&payload).Error; err != nil {
+	if err := db.Model(models.User{}).Unscoped().Scopes(models.WhereByIdentity(request.Identity)).Updates(&payload).Error; err != nil {
 		return err
 	}
 
@@ -88,7 +88,7 @@ func (ur *UserRepository) UpdateUser(
 		First(&result).Error
 }
 
-func (ur *UserRepository) DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, response *[]responses.DeleteUsers) error {
+func (ur *UserRepository) DeleteUsers(db *gorm.DB, request *requests.DeleteUsers, result *[]responses.DeleteUsers) error {
 	tx := db.Model(models.User{}).Unscoped()
 
 	if len(request.Ids) > 0 {
@@ -96,7 +96,7 @@ func (ur *UserRepository) DeleteUsers(db *gorm.DB, request *requests.DeleteUsers
 	}
 
 	return tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
-		Delete(&response).Error
+		Delete(&result).Error
 }
 
 func baseGetUsers(tx *gorm.DB, request *requests.FindUsers) {
