@@ -13,6 +13,7 @@ import (
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsAuth "github.com/ExeCiety/be-presensi-comindo/utils/auth"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsFile "github.com/ExeCiety/be-presensi-comindo/utils/file"
 	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
 
 	"github.com/gofiber/fiber/v2"
@@ -165,6 +166,17 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		)
 	}
 
+	// Attachment
+	attachmentFileUrl, errGetFileUrlFromFilename := utilsFile.GetFileUrlFromFilename(
+		request.Attachment.Filename, utilsEnums.DefaultStorageName,
+	)
+	if errGetFileUrlFromFilename != nil {
+		log.Error(errGetFileUrlFromFilename)
+		return utils.NewApiError(
+			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+		)
+	}
+
 	payload := models.AbsenteeApplication{
 		UserId:     userId,
 		Type:       request.Type,
@@ -172,7 +184,7 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		DateEnd:    dateEnd,
 		Status:     request.Status,
 		Reason:     utils.StrToPtr(request.Reason),
-		Attachment: utils.StrToPtr(request.Attachment),
+		Attachment: utils.StrToPtr(attachmentFileUrl),
 	}
 
 	switch request.Type {
@@ -187,6 +199,20 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		log.Error(err)
 		return utils.NewApiError(
 			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+		)
+	}
+
+	_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
+		{
+			Filename:               request.Attachment.Filename,
+			SourceStorageName:      request.Attachment.StorageName,
+			DestinationStorageName: utilsEnums.DefaultStorageName,
+		},
+	})
+	if errAssignFileToStorage != nil {
+		log.Error(errAssignFileToStorage)
+		return utils.NewApiError(
+			fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
 		)
 	}
 
@@ -305,6 +331,23 @@ func (a AbsenteeApplicationService) DeleteAbsenteeApplications(
 
 	if err := a.absenteeApplicationRepo.DeleteAbsenteeApplications(a.db, request, responseData); err != nil {
 		log.Error(err)
+		return utils.NewApiError(
+			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+		)
+	}
+
+	var removeFileFromModelPayload []utilsFile.RemoveFileFromModelPayload
+	for _, absenteeApplication := range *responseData {
+		if absenteeApplication.Attachment != "" {
+			removeFileFromModelPayload = append(removeFileFromModelPayload, utilsFile.RemoveFileFromModelPayload{
+				FileUrl: absenteeApplication.Attachment,
+			})
+		}
+	}
+
+	_, errRemoveFileFromModel := utilsFile.RemoveFileFromModel(&removeFileFromModelPayload)
+	if errRemoveFileFromModel != nil {
+		log.Error(errRemoveFileFromModel)
 		return utils.NewApiError(
 			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
 		)

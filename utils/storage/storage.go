@@ -8,48 +8,53 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type BaseStorageType struct {
+type BaseStorage struct {
 	Name          string
 	Type          string
 	DirectoryName string
 }
 
 var (
-	StorageTypes = map[string]BaseStorageType{
+	Storages = map[string]BaseStorage{
 		utilsEnums.StorageNameLocal: {
 			Name:          utilsEnums.StorageNameLocal,
 			Type:          utilsEnums.StorageTypeLocal,
 			DirectoryName: utilsEnums.StorageNameLocal,
 		},
+		utilsEnums.StorageNameTemp: {
+			Name:          utilsEnums.StorageNameTemp,
+			Type:          utilsEnums.StorageTypeLocal,
+			DirectoryName: utilsEnums.StorageNameTemp,
+		},
 	}
 )
 
-func GetStorageDirectory(storageType BaseStorageType) string {
+func GetStorageDirectory(storage BaseStorage) string {
 	baseDirectory := ""
-	if storageType.Type == utilsEnums.StorageTypeLocal {
+	if storage.Type == utilsEnums.StorageTypeLocal {
 		baseDirectory = utilsEnums.BaseStorageTypeLocalPath + "/"
 	}
 
-	return baseDirectory + storageType.DirectoryName
+	return baseDirectory + storage.DirectoryName
 }
 
-func CheckStorageDirectoryExist(storageType BaseStorageType) error {
+func CheckStorageDirectoryExist(storage BaseStorage) error {
 	if _, err := os.Stat("storage"); os.IsNotExist(err) {
 		if errMkDirLog := os.Mkdir("storage", 0755); errMkDirLog != nil {
 			return errMkDirLog
 		}
 	}
 
-	if err := MakeStorageDirectoryByName(storageType); err != nil {
+	if err := MakeStorageDirectoryByName(storage); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func MakeStorageDirectoryByName(storageType BaseStorageType) error {
-	if _, err := os.Stat(GetStorageDirectory(storageType)); os.IsNotExist(err) {
-		if errMkDirLog := os.Mkdir(GetStorageDirectory(storageType), 0755); errMkDirLog != nil {
+func MakeStorageDirectoryByName(storage BaseStorage) error {
+	if _, err := os.Stat(GetStorageDirectory(storage)); os.IsNotExist(err) {
+		if errMkDirLog := os.Mkdir(GetStorageDirectory(storage), 0755); errMkDirLog != nil {
 			return errMkDirLog
 		}
 	}
@@ -57,10 +62,10 @@ func MakeStorageDirectoryByName(storageType BaseStorageType) error {
 	return nil
 }
 
-func RegisterStorageType(app *fiber.App) {
-	for _, storageType := range StorageTypes {
-		if storageType.Type == utilsEnums.StorageTypeLocal {
-			storageDirectory := GetStorageDirectory(storageType)
+func RegisterStorages(app *fiber.App) {
+	for _, storage := range Storages {
+		if storage.Type == utilsEnums.StorageTypeLocal {
+			storageDirectory := GetStorageDirectory(storage)
 			app.Static("/"+storageDirectory, "./"+storageDirectory)
 		}
 	}

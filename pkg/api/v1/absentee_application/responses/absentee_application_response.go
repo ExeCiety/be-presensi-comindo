@@ -65,5 +65,6 @@ type UpdateAbsenteeApplication struct {
 }
 
 type DeleteAbsenteeApplications struct {
-	Id uuid.UUID `json:"id"`
+	Id         uuid.UUID `json:"id"`
+	Attachment string    `json:"attachment"`
 }
