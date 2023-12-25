@@ -113,7 +113,7 @@ func (a AbsenteeApplicationRepository) DeleteAbsenteeApplications(
 		tx.Where("status = ?", request.Status)
 	}
 
-	return tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
+	return tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}, {Name: "attachment"}}}).
 		Delete(&result).Error
 }
 

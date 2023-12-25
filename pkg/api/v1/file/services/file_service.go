@@ -33,7 +33,7 @@ func (f FileService) Upload(c *fiber.Ctx, request *requests.UploadFile, response
 	}
 	request.File = form.File["file"]
 
-	uploadFileResults, errUploadFilesToStorage := utilsFile.UploadFilesToStorage(c, request, utilsEnums.StorageNameLocal)
+	uploadFileResults, errUploadFilesToStorage := utilsFile.UploadFilesToStorage(c, request, utilsEnums.StorageNameTemp)
 	if errUploadFilesToStorage != nil {
 		log.Error(errUploadFilesToStorage)
 
@@ -59,8 +59,9 @@ func (f FileService) Upload(c *fiber.Ctx, request *requests.UploadFile, response
 
 	for _, uploadFileResult := range uploadFileResults {
 		*responseData = append(*responseData, responses.UploadFile{
-			Filename: uploadFileResult.Filename,
-			FileUrl:  uploadFileResult.FileUrl,
+			Filename:    uploadFileResult.Filename,
+			FileUrl:     uploadFileResult.FileUrl,
+			StorageName: utilsEnums.StorageNameTemp,
 		})
 	}
 

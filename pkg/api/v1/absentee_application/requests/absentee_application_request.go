@@ -1,6 +1,7 @@
 package requests
 
 import (
+	fileRequests "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/file/requests"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 
 	"github.com/gofrs/uuid"
@@ -24,13 +25,13 @@ type CheckIfAbsenteeApplicationExistOnThatDays struct {
 }
 
 type CreateAbsenteeApplication struct {
-	UserId     string `json:"user_id" validate:"required,uuid,exists=users;id"`
-	Type       string `json:"type" validate:"required,oneof=sick permission paid_leave"`
-	Status     string `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
-	DateStart  string `json:"date_start" validate:"required,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
-	DateEnd    string `json:"date_end" validate:"required,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
-	Reason     string `json:"reason" validate:"required_if=Type permission,required_if=Type paid_leave"`
-	Attachment string `json:"attachment" validate:"required_if=Type sick"`
+	UserId     string                         `json:"user_id" validate:"required,uuid,exists=users;id"`
+	Type       string                         `json:"type" validate:"required,oneof=sick permission paid_leave"`
+	Status     string                         `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
+	DateStart  string                         `json:"date_start" validate:"required,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
+	DateEnd    string                         `json:"date_end" validate:"required,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
+	Reason     string                         `json:"reason" validate:"required_if=Type permission,required_if=Type paid_leave"`
+	Attachment fileRequests.AssignFileToModel `json:"attachment" validate:"required_if=Type sick"`
 }
 
 type UpdateAbsenteeApplication struct {

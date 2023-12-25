@@ -3,7 +3,6 @@ package file
 import (
 	"fmt"
 	"mime/multipart"
-	"os"
 	"time"
 
 	fileEnums "github.com/ExeCiety/be-presensi-comindo/pkg/api/v1/file/enums"
@@ -12,19 +11,22 @@ import (
 	utilsStorage "github.com/ExeCiety/be-presensi-comindo/utils/storage"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storageName string) ([]*UploadFileResult, error) {
-	storageType, ok := utilsStorage.StorageTypes[storageName]
+	storage, ok := utilsStorage.Storages[storageName]
 	if !ok {
+		log.Error("storage not found")
 		return nil, NewUploadFileError(
-			fileEnums.UploadFileErrorStorageTypeNotFound,
+			fileEnums.UploadFileErrorStorageNotFound,
 			-1,
-			"storage type not found",
+			"storage not found",
 		)
 	}
 
-	if err := utilsStorage.CheckStorageDirectoryExist(storageType); err != nil {
+	if err := utilsStorage.CheckStorageDirectoryExist(storage); err != nil {
+		log.Debug(err)
 		return nil, NewUploadFileError(
 			fileEnums.UploadFileErrorCheckStorageDirectoryExistFailed,
 			-1,
@@ -34,6 +36,7 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 
 	uploadFilePurpose, okUploadFilePurposes := UploadFilePurposes[request.Purpose]
 	if !okUploadFilePurposes {
+		log.Error("upload file purpose not found")
 		return nil, NewUploadFileError(
 			fileEnums.UploadFileErrorPurposeNotFound,
 			-1,
@@ -44,6 +47,7 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 	// Check file size
 	for index, file := range request.File {
 		if file.Size > uploadFilePurpose.MaxSize {
+			log.Error("file size is too large")
 			return nil, NewUploadFileError(
 				fileEnums.UploadFileErrorFileTooLarge,
 				index,
@@ -63,6 +67,8 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 		}
 
 		if !isFileMimeTypesAllowed {
+			log.Error("file mime type not allowed")
+
 			return nil, NewUploadFileError(
 				fileEnums.UploadFileErrorFileMimeTypeNotAllowed,
 				index,
@@ -78,10 +84,11 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 		newFilename := GenerateRandomUploadFileName(file)
 		uploadFileResults = append(uploadFileResults, &UploadFileResult{
 			Filename: newFilename,
-			FileUrl:  GetFileUrlFromStorage(newFilename, storageType),
+			FileUrl:  GetFileUrlFromStorage(newFilename, storage),
 		})
 
-		if err := c.SaveFile(file, fmt.Sprintf("./"+utilsStorage.GetStorageDirectory(storageType)+"/%s", newFilename)); err != nil {
+		if err := c.SaveFile(file, fmt.Sprintf("./"+utilsStorage.GetStorageDirectory(storage)+"/%s", newFilename)); err != nil {
+			log.Error(err)
 			errorUploadFile = NewUploadFileError(
 				fileEnums.UploadFileErrorSaveFileFailed,
 				index,
@@ -93,19 +100,14 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 
 	if errorUploadFile != nil {
 		for index, uploadFileResult := range uploadFileResults {
-			fileInfo, err := os.Stat(fmt.Sprintf("./"+utilsStorage.GetStorageDirectory(storageType)+"/%s", uploadFileResult.Filename))
-			if os.IsNotExist(err) {
-				continue
-			}
+			if err := RemoveFileFromStorage(uploadFileResult.Filename, storage); err != nil {
+				log.Error(err)
 
-			if fileInfo != nil {
-				if errRemove := os.Remove(fmt.Sprintf("./"+utilsStorage.GetStorageDirectory(storageType)+"/%s", uploadFileResult.Filename)); errRemove != nil {
-					return nil, NewUploadFileError(
-						fileEnums.UploadFileErrorDeleteFailedUploadedFile,
-						index,
-						"failed to delete uploaded file",
-					)
-				}
+				return nil, NewUploadFileError(
+					fileEnums.UploadFileErrorDeleteFailedUploadedFile,
+					index,
+					fileEnums.UploadFileErrorDeleteFailedUploadedFile,
+				)
 			}
 		}
 

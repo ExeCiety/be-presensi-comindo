@@ -11,6 +11,7 @@ import (
 	pkgRouters "github.com/ExeCiety/be-presensi-comindo/pkg/routers"
 	"github.com/ExeCiety/be-presensi-comindo/utils"
 	utilsEnums "github.com/ExeCiety/be-presensi-comindo/utils/enums"
+	utilsJobs "github.com/ExeCiety/be-presensi-comindo/utils/jobs"
 	utilsStorage "github.com/ExeCiety/be-presensi-comindo/utils/storage"
 	utilsValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations"
 	customValidations "github.com/ExeCiety/be-presensi-comindo/utils/validations/custom_validations"
@@ -21,6 +22,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -86,18 +88,25 @@ func main() {
 		}
 	}
 
-	for _, storageType := range utilsStorage.StorageTypes {
-		if err := utilsStorage.MakeStorageDirectoryByName(storageType); err != nil {
+	for _, storage := range utilsStorage.Storages {
+		if err := utilsStorage.MakeStorageDirectoryByName(storage); err != nil {
 			panic(err)
 		}
 	}
 
-	utilsStorage.RegisterStorageType(app)
+	utilsStorage.RegisterStorages(app)
 
 	// Set Validator
 	utilsValidations.MyValidation = validator.New()
 	utilsValidations.UseJsonTagAsFieldName(utilsValidations.MyValidation)
 	customValidations.RegisterCustomValidations(utilsValidations.MyValidation)
+
+	// Set Cron Job
+	go func() {
+		utilsJobs.MyCron = cron.New(cron.WithSeconds())
+		utilsJobs.RegisterJobs()
+		utilsJobs.MyCron.Start()
+	}()
 
 	// Set Routers
 	pkgRouters.SetRouter(app)
