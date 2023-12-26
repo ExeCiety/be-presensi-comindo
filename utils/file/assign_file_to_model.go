@@ -32,6 +32,7 @@ func AssignFilesToStorage(payload *[]AssignFileToStoragePayload) (*[]AssignFileT
 		// Check Source Storage Exist
 		sourceStorage, okSourceStorage := utilsStorage.Storages[moveFileToStoragePayload.SourceStorageName]
 		if !okSourceStorage {
+			log.Error("Source storage not found")
 			errAssignFileToModel = NewAssignFileToModelError(
 				fileEnums.UploadFileErrorStorageNotFound,
 				fileEnums.UploadFileErrorStorageNotFound,
@@ -42,6 +43,7 @@ func AssignFilesToStorage(payload *[]AssignFileToStoragePayload) (*[]AssignFileT
 		// Check Destination Storage Exist
 		destinationStorage, okDestinationStorage := utilsStorage.Storages[moveFileToStoragePayload.DestinationStorageName]
 		if !okDestinationStorage {
+			log.Error("Destination storage not found")
 			errAssignFileToModel = NewAssignFileToModelError(
 				fileEnums.UploadFileErrorStorageNotFound,
 				fileEnums.UploadFileErrorStorageNotFound,
@@ -128,6 +130,8 @@ func AssignFilesToStorage(payload *[]AssignFileToStoragePayload) (*[]AssignFileT
 			DestinationStorageName: moveFileToStoragePayload.DestinationStorageName,
 		})
 	}
+
+	log.Info(result)
 
 	// If error, remove all destination file
 	if errAssignFileToModel != nil {

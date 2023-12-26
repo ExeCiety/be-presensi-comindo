@@ -25,24 +25,24 @@ type CheckIfAbsenteeApplicationExistOnThatDays struct {
 }
 
 type CreateAbsenteeApplication struct {
-	UserId     string                         `json:"user_id" validate:"required,uuid,exists=users;id"`
-	Type       string                         `json:"type" validate:"required,oneof=sick permission paid_leave"`
-	Status     string                         `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
-	DateStart  string                         `json:"date_start" validate:"required,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
-	DateEnd    string                         `json:"date_end" validate:"required,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
-	Reason     string                         `json:"reason" validate:"required_if=Type permission,required_if=Type paid_leave"`
-	Attachment fileRequests.AssignFileToModel `json:"attachment" validate:"required_if=Type sick"`
+	UserId     string                          `json:"user_id" validate:"required,uuid,exists=users;id"`
+	Type       string                          `json:"type" validate:"required,oneof=sick permission paid_leave"`
+	Status     string                          `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
+	DateStart  string                          `json:"date_start" validate:"required,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
+	DateEnd    string                          `json:"date_end" validate:"required,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
+	Reason     string                          `json:"reason" validate:"required_if=Type permission,required_if=Type paid_leave"`
+	Attachment *fileRequests.AssignFileToModel `json:"attachment" validate:"required_if=Type sick"`
 }
 
 type UpdateAbsenteeApplication struct {
-	Id         string `json:"-"`
-	UserId     string `json:"user_id" validate:"omitempty,uuid,exists=users;id"`
-	Type       string `json:"type" validate:"omitempty,oneof=sick permission paid_leave"`
-	DateStart  string `json:"date_start" validate:"required_with=DateEnd,omitempty,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
-	DateEnd    string `json:"date_end" validate:"required_with=DateStart,omitempty,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
-	Status     string `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
-	Reason     string `json:"reason"`
-	Attachment string `json:"attachment"`
+	Id         string                          `json:"-"`
+	UserId     string                          `json:"user_id" validate:"omitempty,uuid,exists=users;id"`
+	Type       string                          `json:"type" validate:"omitempty,oneof=sick permission paid_leave"`
+	DateStart  string                          `json:"date_start" validate:"required_with=DateEnd,omitempty,datetime=2006-01-02,date_greater_than_today=2006-01-02"`
+	DateEnd    string                          `json:"date_end" validate:"required_with=DateStart,omitempty,datetime=2006-01-02,date_greater_than_field=date start;2006-01-02"`
+	Status     string                          `json:"status" validate:"omitempty,oneof=approved rejected in_review"`
+	Reason     string                          `json:"reason"`
+	Attachment *fileRequests.AssignFileToModel `json:"attachment"`
 }
 
 type DeleteAbsenteeApplications struct {

@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-func RemoveFileFromModel(payload *[]RemoveFileFromModelPayload) (*[]RemoveFileFromModelResult, error) {
+func RemoveFilesFromModel(payload *[]RemoveFileFromModelPayload) (*[]RemoveFileFromModelResult, error) {
 	for _, file := range *payload {
 		storage, errGetStorageFromFileUrl := GetStorageFromFileUrl(file.FileUrl)
 		if errGetStorageFromFileUrl != nil {

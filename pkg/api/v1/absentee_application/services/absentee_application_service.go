@@ -135,6 +135,7 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		}
 	}
 
+	// Check if absentee application already exist on that days
 	if isExists := a.absenteeApplicationRepo.CheckIfAbsenteeApplicationExistOnThatDays(
 		a.db,
 		&requests.CheckIfAbsenteeApplicationExistOnThatDays{
@@ -150,6 +151,7 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		)
 	}
 
+	// Prepare date start and date end for create payload
 	dateStart, errParseDateStart := time.Parse(utilsEnums.DefaultDateFormat, request.DateStart)
 	if errParseDateStart != nil {
 		log.Error(errParseDateStart)
@@ -166,15 +168,20 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		)
 	}
 
-	// Attachment
-	attachmentFileUrl, errGetFileUrlFromFilename := utilsFile.GetFileUrlFromFilename(
-		request.Attachment.Filename, utilsEnums.DefaultStorageName,
-	)
-	if errGetFileUrlFromFilename != nil {
-		log.Error(errGetFileUrlFromFilename)
-		return utils.NewApiError(
-			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+	// Prepare attachment for create payload
+	var attachment string
+	if request.Attachment != nil {
+		attachmentFileUrl, errGetFileUrlFromFilename := utilsFile.GetFileUrlFromFilename(
+			request.Attachment.Filename, utilsEnums.DefaultStorageName,
 		)
+		if errGetFileUrlFromFilename != nil {
+			log.Error(errGetFileUrlFromFilename)
+			return utils.NewApiError(
+				fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+			)
+		}
+
+		attachment = attachmentFileUrl
 	}
 
 	payload := models.AbsenteeApplication{
@@ -184,7 +191,7 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		DateEnd:    dateEnd,
 		Status:     request.Status,
 		Reason:     utils.StrToPtr(request.Reason),
-		Attachment: utils.StrToPtr(attachmentFileUrl),
+		Attachment: utils.StrToPtr(attachment),
 	}
 
 	switch request.Type {
@@ -202,18 +209,21 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 		)
 	}
 
-	_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
-		{
-			Filename:               request.Attachment.Filename,
-			SourceStorageName:      request.Attachment.StorageName,
-			DestinationStorageName: utilsEnums.DefaultStorageName,
-		},
-	})
-	if errAssignFileToStorage != nil {
-		log.Error(errAssignFileToStorage)
-		return utils.NewApiError(
-			fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
-		)
+	// Assign attachment to storage
+	if request.Attachment != nil {
+		_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
+			{
+				Filename:               request.Attachment.Filename,
+				SourceStorageName:      request.Attachment.StorageName,
+				DestinationStorageName: utilsEnums.DefaultStorageName,
+			},
+		})
+		if errAssignFileToStorage != nil {
+			log.Error(errAssignFileToStorage)
+			return utils.NewApiError(
+				fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
+			)
+		}
 	}
 
 	return nil
@@ -263,6 +273,7 @@ func (a AbsenteeApplicationService) UpdateAbsenteeApplication(
 		)
 	}
 
+	// Prepare date start and date end for update payload
 	dateStart, errParseDateStart := time.Parse(utilsEnums.DefaultDateFormat, request.DateStart)
 	if errParseDateStart != nil {
 		log.Error(errParseDateStart)
@@ -279,6 +290,22 @@ func (a AbsenteeApplicationService) UpdateAbsenteeApplication(
 		)
 	}
 
+	// Prepare attachment for create payload
+	var attachment string
+	if request.Attachment != nil {
+		attachmentFileUrl, errGetFileUrlFromFilename := utilsFile.GetFileUrlFromFilename(
+			request.Attachment.Filename, utilsEnums.DefaultStorageName,
+		)
+		if errGetFileUrlFromFilename != nil {
+			log.Error(errGetFileUrlFromFilename)
+			return utils.NewApiError(
+				fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+			)
+		}
+
+		attachment = attachmentFileUrl
+	}
+
 	payload := models.AbsenteeApplication{
 		UserId:     uuid.FromStringOrNil(request.UserId),
 		Type:       request.Type,
@@ -286,7 +313,7 @@ func (a AbsenteeApplicationService) UpdateAbsenteeApplication(
 		DateStart:  dateStart,
 		DateEnd:    dateEnd,
 		Reason:     utils.StrToPtr(request.Reason),
-		Attachment: utils.StrToPtr(request.Attachment),
+		Attachment: utils.StrToPtr(attachment),
 	}
 
 	switch request.Type {
@@ -302,6 +329,39 @@ func (a AbsenteeApplicationService) UpdateAbsenteeApplication(
 		return utils.NewApiError(
 			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
 		)
+	}
+
+	// Update Attachment
+	if request.Attachment != nil {
+		// Assign attachment to storage
+		_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
+			{
+				Filename:               request.Attachment.Filename,
+				SourceStorageName:      request.Attachment.StorageName,
+				DestinationStorageName: utilsEnums.DefaultStorageName,
+			},
+		})
+		if errAssignFileToStorage != nil {
+			log.Error(errAssignFileToStorage)
+			return utils.NewApiError(
+				fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
+			)
+		}
+
+		// Remove old attachment from storage
+		removeFileFromModelPayload := []utilsFile.RemoveFileFromModelPayload{
+			{
+				FileUrl: absenteeApplication.Attachment,
+			},
+		}
+
+		_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
+		if errRemoveFileFromModel != nil {
+			log.Error(errRemoveFileFromModel)
+			return utils.NewApiError(
+				fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
+			)
+		}
 	}
 
 	return nil
@@ -345,7 +405,7 @@ func (a AbsenteeApplicationService) DeleteAbsenteeApplications(
 		}
 	}
 
-	_, errRemoveFileFromModel := utilsFile.RemoveFileFromModel(&removeFileFromModelPayload)
+	_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
 	if errRemoveFileFromModel != nil {
 		log.Error(errRemoveFileFromModel)
 		return utils.NewApiError(
