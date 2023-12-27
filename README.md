@@ -45,3 +45,7 @@ go run main.go seeder rollback
 ```
 Note: rollback argument will only rollback the last seeder, if you want to rollback multiple migration, you can use --step flag
 Example: go run main.go seeder rollback --step=2
+
+### API Documentation
+Postman Documenter
+https://documenter.getpostman.com/view/7865721/2s9YkuXxJB
