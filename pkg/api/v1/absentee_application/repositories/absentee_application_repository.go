@@ -123,6 +123,21 @@ func baseFindAbsenteeApplications(tx *gorm.DB, request *requests.GetAbsenteeAppl
 	if request.UserId != nil {
 		tx.Where("user_id = ?", request.UserId)
 	}
+
+	if request.DateStart != nil && request.DateEnd == nil {
+		tx.Where("date_start >= ? OR date_end >= ?", request.DateStart, request.DateStart)
+	}
+
+	if request.DateEnd != nil && request.DateStart == nil {
+		tx.Where("date_end <= ? OR date_start <= ?", request.DateEnd, request.DateEnd)
+	}
+
+	if request.DateStart != nil && request.DateEnd != nil {
+		tx.Where(
+			"((date_start >= ? AND date_start <= ?) OR (date_end >= ? AND date_end <= ?))",
+			request.DateStart, request.DateEnd, request.DateStart, request.DateEnd,
+		)
+	}
 }
 
 func baseFindAbsenteeApplication(tx *gorm.DB, request *requests.GetAbsenteeApplication) {

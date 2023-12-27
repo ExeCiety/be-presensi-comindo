@@ -8,7 +8,9 @@ import (
 )
 
 type GetAbsenteeApplications struct {
-	UserId *string `query:"user_id" validate:"omitempty,uuid,exists=users;id"`
+	UserId    *string `query:"user_id" validate:"omitempty,uuid,exists=users;id"`
+	DateStart *string `query:"date_start" validate:"omitempty,datetime=2006-01-02"`
+	DateEnd   *string `query:"date_end" validate:"omitempty,datetime=2006-01-02"`
 	utils.PaginationRequest
 }
 
