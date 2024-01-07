@@ -10,30 +10,27 @@ import (
 	"gorm.io/gorm"
 )
 
-type AbsenteeApplications struct {
+type Presences struct {
 	Id         uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	UserId     uuid.UUID `json:"user_id" gorm:"not null"`
 	User       Users     `gorm:"references:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Type       string    `json:"type" gorm:"type:varchar(20);not null"`
-	Status     string    `json:"status" gorm:"type:varchar(20);default:'in_review'"`
-	DateStart  time.Time `json:"date_start" gorm:"type:date;not null"`
-	DateEnd    time.Time `json:"date_end" gorm:"type:date;not null"`
-	Reason     string    `json:"reason" gorm:"type:text;"`
-	Attachment string    `json:"attachment" gorm:"type:text;"`
+	EntryTime  time.Time `json:"entry_time" gorm:"not null"`
+	ExitTime   time.Time `json:"exit_time" gorm:"default:null"`
+	IsOvertime bool      `json:"is_overtime"`
 	utils.Timestamp
 }
 
-func CreateAbsenteeApplicationsTable() *gormigrate.Migration {
+func CreatePresencesTable() *gormigrate.Migration {
 	return &gormigrate.Migration{
-		ID: "20231126143717",
+		ID: "20231230084340",
 		Migrate: func(tx *gorm.DB) error {
 			return tx.Debug().
-				AutoMigrate(&AbsenteeApplications{})
+				AutoMigrate(&Presences{})
 		},
 		Rollback: func(tx *gorm.DB) error {
 			return tx.Debug().
 				Migrator().
-				DropTable(&AbsenteeApplications{})
+				DropTable(&Presences{})
 		},
 	}
 }

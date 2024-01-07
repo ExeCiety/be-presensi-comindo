@@ -136,14 +136,14 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 	}
 
 	// Check if absentee application already exist on that days
-	if isExists := a.absenteeApplicationRepo.CheckIfAbsenteeApplicationExistOnThatDays(
+	if isExist := a.absenteeApplicationRepo.CheckIfAbsenteeApplicationExistOnThatDays(
 		a.db,
 		&requests.CheckIfAbsenteeApplicationExistOnThatDays{
 			UserId:    userId,
 			DateStart: request.DateStart,
 			DateEnd:   request.DateEnd,
 		},
-	); isExists == true {
+	); isExist == true {
 		return utils.NewApiError(
 			fiber.StatusConflict,
 			utils.Translate("absentee_application.absentee_application_already_exist_on_that_days", nil),
@@ -210,21 +210,20 @@ func (a AbsenteeApplicationService) CreateAbsenteeApplication(
 	}
 
 	// Assign attachment to storage
-	if request.Attachment != nil {
-		_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
-			{
-				Filename:               request.Attachment.Filename,
-				SourceStorageName:      request.Attachment.StorageName,
-				DestinationStorageName: utilsEnums.DefaultStorageName,
-			},
-		})
-		if errAssignFileToStorage != nil {
-			log.Error(errAssignFileToStorage)
-			return utils.NewApiError(
-				fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
-			)
+	go func() {
+		if request.Attachment != nil {
+			_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
+				{
+					Filename:               request.Attachment.Filename,
+					SourceStorageName:      request.Attachment.StorageName,
+					DestinationStorageName: utilsEnums.DefaultStorageName,
+				},
+			})
+			if errAssignFileToStorage != nil {
+				log.Error(errAssignFileToStorage)
+			}
 		}
-	}
+	}()
 
 	return nil
 }
@@ -332,37 +331,33 @@ func (a AbsenteeApplicationService) UpdateAbsenteeApplication(
 	}
 
 	// Update Attachment
-	if request.Attachment != nil {
-		// Assign attachment to storage
-		_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
-			{
-				Filename:               request.Attachment.Filename,
-				SourceStorageName:      request.Attachment.StorageName,
-				DestinationStorageName: utilsEnums.DefaultStorageName,
-			},
-		})
-		if errAssignFileToStorage != nil {
-			log.Error(errAssignFileToStorage)
-			return utils.NewApiError(
-				fiber.StatusInternalServerError, errAssignFileToStorage.Error(), nil,
-			)
-		}
+	go func() {
+		if request.Attachment != nil {
+			// Assign attachment to storage
+			_, errAssignFileToStorage := utilsFile.AssignFilesToStorage(&[]utilsFile.AssignFileToStoragePayload{
+				{
+					Filename:               request.Attachment.Filename,
+					SourceStorageName:      request.Attachment.StorageName,
+					DestinationStorageName: utilsEnums.DefaultStorageName,
+				},
+			})
+			if errAssignFileToStorage != nil {
+				log.Error(errAssignFileToStorage)
+			}
 
-		// Remove old attachment from storage
-		removeFileFromModelPayload := []utilsFile.RemoveFileFromModelPayload{
-			{
-				FileUrl: absenteeApplication.Attachment,
-			},
-		}
+			// Remove old attachment from storage
+			removeFileFromModelPayload := []utilsFile.RemoveFileFromModelPayload{
+				{
+					FileUrl: absenteeApplication.Attachment,
+				},
+			}
 
-		_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
-		if errRemoveFileFromModel != nil {
-			log.Error(errRemoveFileFromModel)
-			return utils.NewApiError(
-				fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
-			)
+			_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
+			if errRemoveFileFromModel != nil {
+				log.Error(errRemoveFileFromModel)
+			}
 		}
-	}
+	}()
 
 	return nil
 }
@@ -396,22 +391,22 @@ func (a AbsenteeApplicationService) DeleteAbsenteeApplications(
 		)
 	}
 
-	var removeFileFromModelPayload []utilsFile.RemoveFileFromModelPayload
-	for _, absenteeApplication := range *responseData {
-		if absenteeApplication.Attachment != "" {
-			removeFileFromModelPayload = append(removeFileFromModelPayload, utilsFile.RemoveFileFromModelPayload{
-				FileUrl: absenteeApplication.Attachment,
-			})
+	go func() {
+		// Remove attachment from storage
+		var removeFileFromModelPayload []utilsFile.RemoveFileFromModelPayload
+		for _, absenteeApplication := range *responseData {
+			if absenteeApplication.Attachment != "" {
+				removeFileFromModelPayload = append(removeFileFromModelPayload, utilsFile.RemoveFileFromModelPayload{
+					FileUrl: absenteeApplication.Attachment,
+				})
+			}
 		}
-	}
 
-	_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
-	if errRemoveFileFromModel != nil {
-		log.Error(errRemoveFileFromModel)
-		return utils.NewApiError(
-			fiber.StatusInternalServerError, utilsEnums.StatusMessageInternalServerError, nil,
-		)
-	}
+		_, errRemoveFileFromModel := utilsFile.RemoveFilesFromModel(&removeFileFromModelPayload)
+		if errRemoveFileFromModel != nil {
+			log.Error(errRemoveFileFromModel)
+		}
+	}()
 
 	return nil
 }

@@ -10,6 +10,8 @@
     "alphaspace": "{{.Field}} contains only letters",
     "uuid4": "{{.Field}} must be a valid UUID",
     "oneof": "{{.Field}} must be one of {{.Param}}",
+    "latitude": "{{.Field}} must be a valid latitude",
+    "longitude": "{{.Field}} must be a valid longitude",
     "max": {
       "password": "{{.Field}} maximum {{.Param}} characters",
       "password_confirmation": "{{.Field}} maximum {{.Param}} characters",
@@ -44,7 +46,9 @@
     "datetime": "{{.Value}} is not a valid date, allowed format: {{.Param}}",
     "exists": "{{.Field}} is not exist",
     "date_greater_than_today": "{{.Field}} must be greater than today",
-    "date_greater_than_field": "{{.Field}} must be greater than {{.Param}}"
+    "date_greater_than_field": "{{.Field}} must be greater than {{.Param}}",
+    "date_same_as_field": "{{.Field}} date must be same as {{.Param}}",
+    "date_same_as_today": "{{.Field}} date must be same as today"
   },
   "err": {
     "validation_error": "Validation error",
@@ -72,5 +76,14 @@
   },
   "file": {
     "upload_file_success": "Upload file success"
+  },
+  "presence": {
+    "get_presences_success": "Get presences success",
+    "create_presence_success": "Create presence success",
+    "update_presence_success": "Update presence success",
+    "delete_presences_success": "Delete presences success",
+    "outside_distance_office": "Presence location outside the office",
+    "already_exist_on_this_day": "Presence already exist on this day",
+    "exit_time_must_greater_than_entry_time": "Exit time must be greater than entry time"
   }
 }

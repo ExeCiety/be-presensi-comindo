@@ -10,7 +10,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func DateGreaterThanField(fl validator.FieldLevel) bool {
+func DateSameAsField(fl validator.FieldLevel) bool {
 	paramValues := strings.SplitN(fl.Param(), ";", 2)
 	if len(paramValues) <= 0 {
 		return false
@@ -47,7 +47,7 @@ func DateGreaterThanField(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	if layoutParse.Before(fieldParse) {
+	if layoutParse.Format("2006-01-02") != fieldParse.Format("2006-01-02") {
 		return false
 	}
 

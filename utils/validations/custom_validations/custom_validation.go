@@ -25,4 +25,14 @@ func RegisterCustomValidations(v *validator.Validate) {
 		log.Error(err)
 		return
 	}
+
+	if err := v.RegisterValidation("date_same_as_field", DateSameAsField); err != nil {
+		log.Error(err)
+		return
+	}
+
+	if err := v.RegisterValidation("date_same_as_today", DateSameAsToday); err != nil {
+		log.Error(err)
+		return
+	}
 }

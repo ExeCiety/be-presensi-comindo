@@ -10,9 +10,9 @@ import (
 
 type RoleUser struct {
 	Id     uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	RoleId uuid.UUID `json:"role_id"`
+	RoleId uuid.UUID `json:"role_id" gorm:"not null"`
 	Role   Roles     `gorm:"references:RoleId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserId uuid.UUID `json:"user_id"`
+	UserId uuid.UUID `json:"user_id" gorm:"not null"`
 	User   Users     `gorm:"references:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	utils.Timestamp
 }

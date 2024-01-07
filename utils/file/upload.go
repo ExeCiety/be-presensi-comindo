@@ -26,7 +26,7 @@ func UploadFilesToStorage(c *fiber.Ctx, request *fileRequests.UploadFile, storag
 	}
 
 	if err := utilsStorage.CheckStorageDirectoryExist(storage); err != nil {
-		log.Debug(err)
+		log.Error(err)
 		return nil, NewUploadFileError(
 			fileEnums.UploadFileErrorCheckStorageDirectoryExistFailed,
 			-1,
