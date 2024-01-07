@@ -39,7 +39,14 @@ type FindUser struct {
 	UpdatedAt string         `json:"updated_at"`
 }
 
-type UserForCreateAbsenteeApplication struct {
+type UserForAbsenteeApplication struct {
+	Id    uuid.UUID     `json:"id"`
+	Email string        `json:"email"`
+	Name  string        `json:"name"`
+	Roles []*SimpleRole `json:"roles" gorm:"many2many:role_users;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
+}
+
+type UserForPresence struct {
 	Id    uuid.UUID     `json:"id"`
 	Email string        `json:"email"`
 	Name  string        `json:"name"`
@@ -70,6 +77,9 @@ type DeleteUsers struct {
 	Id uuid.UUID `json:"id"`
 }
 
-func (UserForCreateAbsenteeApplication) TableName() string {
+func (UserForAbsenteeApplication) TableName() string {
+	return enums.UserTableName
+}
+func (UserForPresence) TableName() string {
 	return enums.UserTableName
 }

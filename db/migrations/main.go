@@ -16,6 +16,8 @@ func init() {
 		CreateRolesTable(),
 		CreateRoleUserTable(),
 		CreateAbsenteeApplicationsTable(),
+		CreatePresencesTable(),
+		CreateOvertimeActivities(),
 	}
 }
 

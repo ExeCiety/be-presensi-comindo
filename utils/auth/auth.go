@@ -81,3 +81,19 @@ func IsUserAuthedHasRoles(roles []string) (bool, error) {
 
 	return false, nil
 }
+
+func IsUserAuthedDoesNotHaveRoles(roles []string) (bool, error) {
+	if UserAuthedData == nil {
+		return false, errors.New(utilsEnums.ErrorUserIsNotAuthenticated)
+	}
+
+	for _, role := range UserAuthedData.Roles {
+		for _, roleName := range roles {
+			if role.RoleName == roleName {
+				return false, nil
+			}
+		}
+	}
+
+	return true, nil
+}

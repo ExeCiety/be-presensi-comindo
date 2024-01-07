@@ -2,5 +2,5 @@
 .env
 tmp
 logs
-storage
+/storage/*.key
 be-presensi-comindo

@@ -7,4 +7,5 @@ const (
 	ValidationTagNameExists               = "exists"
 	ValidationTagNameDateGreaterThanToday = "date_greater_than_today"
 	ValidationTagNameDateGreaterThanField = "date_greater_than_field"
+	ValidationTagNameDateSameAsField      = "date_same_as_field"
 )

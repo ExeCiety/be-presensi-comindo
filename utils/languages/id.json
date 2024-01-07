@@ -10,6 +10,8 @@
     "alphaspace": "{{.Field}} hanya berisi huruf",
     "uuid": "{{.Field}} harus berupa UUID yang valid",
     "oneof": "{{.Field}} harus diantara {{.Param}}",
+    "latitude": "{{.Field}} harus berupa latitude yang valid",
+    "longitude": "{{.Field}} harus berupa longitude yang valid",
     "max": {
       "password": "{{.Field}} maksimal {{.Param}} karakter",
       "password_confirmation": "{{.Field}} maksimal {{.Param}} karakter",
@@ -44,7 +46,9 @@
     "datetime": "{{.Value}} adalah format yang salah, format yang benar adalah {{.Param}}",
     "exists": "{{.Field}} tidak terdaftar",
     "date_greater_than_today": "{{.Field}} harus lebih besar dari tanggal sekarang",
-    "date_greater_than_field": "{{.Field}} harus lebih besar dari {{.Param}}"
+    "date_greater_than_field": "Tanggal {{.Field}} harus lebih besar dari {{.Param}}",
+    "date_same_as_field": "Tanggal {{.Field}} harus sama dengan {{.Param}}",
+    "date_same_as_today": "{{.Field}} harus sama dengan tanggal sekarang"
   },
   "err": {
     "validation_error": "Terjadi kesalahan saat validasi",
@@ -71,5 +75,14 @@
   },
   "file": {
     "upload_file_success": "Berhasil mengupload file"
+  },
+  "presence": {
+    "get_presences_success": "Berhasil mendapatkan data presensi",
+    "create_presence_success": "Berhasil membuat presensi",
+    "update_presence_success": "Berhasil mengubah data presensi",
+    "delete_presences_success": "Berhasil menghapus presensi",
+    "outside_distance_office": "Lokasi presensi diluar jarak kantor",
+    "already_exist_on_this_day": "Presensi sudah ada pada tanggal tersebut",
+    "exit_time_must_greater_than_entry_time": "Waktu pulang harus lebih besar dari waktu masuk"
   }
 }

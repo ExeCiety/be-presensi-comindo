@@ -34,7 +34,8 @@ func (v *ValidationError) GetParam() interface{} {
 	param := v.Param
 
 	switch v.Tag {
-	case enums.ValidationTagNameDateGreaterThanField:
+	case enums.ValidationTagNameDateGreaterThanField,
+		enums.ValidationTagNameDateSameAsField:
 		return GetDateGreaterThanFieldParam(v)
 	}
 

@@ -34,7 +34,6 @@ func (a AbsenteeApplicationRepository) FindAbsenteeApplication(
 	result *responses.GetAbsenteeApplication,
 ) error {
 	tx := db.Model(models.AbsenteeApplication{}).Unscoped()
-
 	baseFindAbsenteeApplication(tx, request)
 
 	return tx.First(&result).Error
@@ -48,7 +47,10 @@ func (a AbsenteeApplicationRepository) CheckIfAbsenteeApplicationExistOnThatDays
 
 	tx := db.Model(models.AbsenteeApplication{}).
 		Where("user_id = ?", request.UserId).
-		Where("((date_start <= ? AND date_end >= ?) OR (date_start <= ? AND date_end >= ?))", request.DateStart, request.DateStart, request.DateEnd, request.DateEnd)
+		Where(
+			"((date_start <= ? AND date_end >= ?) OR (date_start <= ? AND date_end >= ?))",
+			request.DateStart, request.DateStart, request.DateEnd, request.DateEnd,
+		)
 
 	if request.ExceptionId != nil {
 		tx = tx.Where("id != ?", request.ExceptionId)
